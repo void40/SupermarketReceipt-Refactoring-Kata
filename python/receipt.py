@@ -1,35 +1,17 @@
-
-class ReceiptItem:
-    def __init__(self, product, quantity, price, total_price):
-        self.product = product
-        self.quantity = quantity
-        self.price = price
-        self.total_price = total_price
+from typing import List
 
 
 class Receipt:
     def __init__(self):
-        self._items = []
-        self._discounts = []
+        self.items: List[str] = []
+        self.total: float = 0.0
 
-    def total_price(self):
-        total = 0
-        for item in self.items:
-            total += item.total_price
-        for discount in self.discounts:
-            total += discount.discount_amount
-        return total
+    def add_item(self, product_name: str, quantity: float, price: float):
+        self.items.append(f"{product_name} x{quantity}: ${price:.2f}")
+        self.total += price
 
-    def add_product(self, product, quantity, price, total_price):
-        self._items.append(ReceiptItem(product, quantity, price, total_price))
+    def get_items(self) -> List[str]:
+        return self.items
 
-    def add_discount(self, discount):
-        self._discounts.append(discount)
-
-    @property
-    def items(self):
-        return self._items[:]
-
-    @property
-    def discounts(self):
-        return self._discounts[:]
+    def get_total(self) -> float:
+        return self.total

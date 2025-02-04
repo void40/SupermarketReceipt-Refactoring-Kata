@@ -1,38 +1,40 @@
-from enum import Enum
+from abc import ABC, abstractmethod
 
 
 class Product:
-    def __init__(self, name, unit):
+    def __init__(self, name: str, unit_price: float):
         self.name = name
-        self.unit = unit
+        self.unit_price = unit_price
 
 
-class ProductQuantity:
-    def __init__(self, product, quantity):
-        self.product = product
-        self.quantity = quantity
+class PricingStrategy(ABC):
+    @abstractmethod
+    def calculate_price(self, quantity: float, unit_price: float) -> float:
+        pass
 
 
-class ProductUnit(Enum):
-    EACH = 1
-    KILO = 2
+class StandardPricing(PricingStrategy):
+    def calculate_price(self, quantity: float, unit_price: float) -> float:
+        return quantity * unit_price
 
 
-class SpecialOfferType(Enum):
-    THREE_FOR_TWO = 1
-    TEN_PERCENT_DISCOUNT = 2
-    TWO_FOR_AMOUNT = 3
-    FIVE_FOR_AMOUNT = 4
+class BulkDiscountPricing(PricingStrategy):
+    def __init__(self, bulk_size: int, bulk_price: float):
+        self.bulk_size = bulk_size
+        self.bulk_price = bulk_price
 
-class Offer:
-    def __init__(self, offer_type, product, argument):
-        self.offer_type = offer_type
-        self.product = product
-        self.argument = argument
+    def calculate_price(self, quantity: float, unit_price: float) -> float:
+        bulk_count = quantity // self.bulk_size
+        remainder = quantity % self.bulk_size
+        return (bulk_count * self.bulk_price) + (remainder * unit_price)
 
 
-class Discount:
-    def __init__(self, product, description, discount_amount):
-        self.product = product
-        self.description = description
-        self.discount_amount = discount_amount
+class BuyXGetYFreePricing(PricingStrategy):
+    def __init__(self, x: int, y: int):
+        self.x = x
+        self.y = y
+
+    def calculate_price(self, quantity: float, unit_price: float) -> float:
+        eligible_units = (quantity // (self.x + self.y)) * self.x
+        remaining_units = quantity % (self.x + self.y)
+        return (eligible_units + remaining_units) * unit_price
