@@ -12,7 +12,7 @@
 On the command line, enter the `SupermarketReceipt-Refactoring-Kata/python` directory and run
 
 ```
-pytest
+PYTHONPATH=. pytest
 ```
 
 ## Optional: Running [TextTest](https://www.texttest.org/) Tests
